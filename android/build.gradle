@@ -9,6 +9,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.1'
@@ -49,6 +50,7 @@ repositories {
 
 
 dependencies {
+    api 'com.tencent.mm.opensdk:wechat-sdk-android:+'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':capacitor-android')
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
