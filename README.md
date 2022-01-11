@@ -36,9 +36,9 @@ echo(options: { value: string; }) => Promise<{ value: string; }>
 
 测试
 
-| Param         | Type                            | Description |
-| ------------- | ------------------------------- | ----------- |
-| **`options`** | <code>{ value: string; }</code> | 测试字符串       |
+| Param         | Type                            |
+| ------------- | ------------------------------- |
+| **`options`** | <code>{ value: string; }</code> |
 
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
 
@@ -65,12 +65,12 @@ pay(options: { prepayId: string; packageValue: string; nonceStr: string; timeSta
 ### isInstalled()
 
 ```typescript
-isInstalled() => Promise<{ value: boolean; }>
+isInstalled() => Promise<any>
 ```
 
 判断是否安装微信
 
-**Returns:** <code>Promise&lt;{ value: boolean; }&gt;</code>
+**Returns:** <code>Promise&lt;any&gt;</code>
 
 --------------------
 
@@ -98,9 +98,9 @@ shareLink(options: { url: string; title: string; description: string; thumb?: st
 
 分享链接
 
-| Param         | Type                                                                                             |
-| ------------- | ------------------------------------------------------------------------------------------------ |
-| **`options`** | <code>{ url: string; title: string; description: string; thumb?: string; scene: number; }</code> |
+| Param         | Type                                                                                             | Description         |
+| ------------- | ------------------------------------------------------------------------------------------------ | ------------------- |
+| **`options`** | <code>{ url: string; title: string; description: string; thumb?: string; scene: number; }</code> | thumb - 图片base64字符串 |
 
 --------------------
 
@@ -113,9 +113,9 @@ shareImage(options: { imageUrl: string; title: string; description: string; scen
 
 分享图片
 
-| Param         | Type                                                                                  |
-| ------------- | ------------------------------------------------------------------------------------- |
-| **`options`** | <code>{ imageUrl: string; title: string; description: string; scene: number; }</code> |
+| Param         | Type                                                                                  | Description         |
+| ------------- | ------------------------------------------------------------------------------------- | ------------------- |
+| **`options`** | <code>{ imageUrl: string; title: string; description: string; scene: number; }</code> |  imageUrl - 图片的本地路径 |
 
 --------------------
 
@@ -128,9 +128,9 @@ shareMiniProgram(options: { webpageUrl: string; userName: string; path: string; 
 
 分享微信小程序
 
-| Param         | Type                                                                                                                                                                                            |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`options`** | <code>{ webpageUrl: string; userName: string; path: string; hdImageData: string; withShareTicket: boolean; miniProgramType: number; title: string; description: string; scene: number; }</code> |
+| Param         | Type                                                                                                                                                                                            | Description                |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| **`options`** | <code>{ webpageUrl: string; userName: string; path: string; hdImageData: string; withShareTicket: boolean; miniProgramType: number; title: string; description: string; scene: number; }</code> |  hdImageData - 图片base64字符串 |
 
 --------------------
 

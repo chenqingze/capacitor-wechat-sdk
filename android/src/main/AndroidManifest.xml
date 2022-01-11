@@ -1,3 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.chenqingze.wechatsdk">
+
+
+    <application>
+        <activity
+            android:name="com.github.chenqingze.wechatsdk.WXPayEntryActivity"
+            android:exported="true"
+            android:label="WXPayEntryActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity="${wechatPackageName}"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+    </application>
 </manifest>

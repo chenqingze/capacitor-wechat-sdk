@@ -4,12 +4,24 @@ import static com.github.chenqingze.wechatsdk.Constants.ERROR_INVALID_PARAMETERS
 import static com.github.chenqingze.wechatsdk.Constants.ERROR_SEND_REQUEST_FAILED;
 import static com.github.chenqingze.wechatsdk.Constants.ERROR_WECHAT_NOT_INSTALLED;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+
 import com.getcapacitor.Bridge;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXImageObject;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
+import com.tencent.mm.opensdk.modelmsg.WXTextObject;
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -22,6 +34,7 @@ public class WechatSDKPlugin extends Plugin {
     private WechatSDK implementation = new WechatSDK();
     private IWXAPI wxApi;
     public static String callbackId;
+    private static final int THUMB_SIZE = 150;
 
     /**
      * 初始化操作
@@ -33,33 +46,6 @@ public class WechatSDKPlugin extends Plugin {
         registerWeChat();
     }
 
-    /**
-     * 获取微信appId
-     *
-     * @return
-     */
-    private String getWxAppId() {
-        return bridge.getConfig().getString("wechatAppId");
-    }
-
-
-    /**
-     * 获取商户id
-     *
-     * @return
-     */
-    private String getMchId() {
-        return bridge.getConfig().getString("mchid");
-    }
-
-    /**
-     * 向微信注册app
-     */
-    private void registerWeChat() {
-        String wxAppId = getWxAppId();
-        wxApi = WXAPIFactory.createWXAPI(this.getContext(), wxAppId, true);
-        wxApi.registerApp(wxAppId);
-    }
 
     /**
      * 测试
@@ -112,12 +98,14 @@ public class WechatSDKPlugin extends Plugin {
         req.packageValue = call.getString("packageValue"); // 签名
         req.sign = call.getString("sign");// 签名
 
-        callbackId = call.getCallbackId();
-        bridge.saveCall(call);
-
         if (!req.checkArgs()) {
             call.reject(ERROR_INVALID_PARAMETERS);
             return;
+        }
+
+        callbackId = call.getCallbackId();
+        if (callbackId != null) {
+            bridge.saveCall(call);
         }
 
         if (!wxApi.sendReq(req)) {
@@ -125,4 +113,277 @@ public class WechatSDKPlugin extends Plugin {
         }
     }
 
+    /**
+     * 分享文本
+     *
+     * @param call
+     */
+    @PluginMethod
+    public void shareText(PluginCall call) {
+        Integer scene = call.getInt("scene");
+        String text = call.getString("text");
+        //初始化一个 WXTextObject 对象，填写分享的文本内容
+        WXTextObject textObj = new WXTextObject();
+        textObj.text = text;
+
+        //用 WXTextObject 对象初始化一个 WXMediaMessage 对象
+        WXMediaMessage msg = new WXMediaMessage();
+        msg.mediaObject = textObj;
+        msg.description = text;
+
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.transaction = buildTransaction("text");
+        req.message = msg;
+
+        req.scene = scene;
+
+        if (!req.checkArgs()) {
+            call.reject(ERROR_INVALID_PARAMETERS);
+            return;
+        }
+        callbackId = call.getCallbackId();
+        if (callbackId != null) {
+            bridge.saveCall(call);
+        }
+
+        //调用api接口，发送数据到微信
+        wxApi.sendReq(req);
+    }
+
+
+    /**
+     * 分享链接
+     *
+     * @param call
+     */
+    @PluginMethod
+    public void shareLink(PluginCall call) {
+
+        // String webpageUrl = call.getString("url");
+        // String title = call.getString("title");
+        // String description = call.getString("description");
+        // String thumb = call.getString("thumb");
+        // 初始化一个WXWebpageObject，填写url
+        WXWebpageObject webpage = new WXWebpageObject();
+        webpage.webpageUrl = call.getString("url");
+
+        // 用 WXWebpageObject 对象初始化一个 WXMediaMessage 对象
+        WXMediaMessage msg = new WXMediaMessage(webpage);
+        msg.title = call.getString("title");
+        msg.description = call.getString("description");
+
+        String thumb = call.getString("thumb");
+        if (thumb == null || thumb.length() <= 0) {
+            call.reject(ERROR_INVALID_PARAMETERS);
+            return;
+        }
+        msg.thumbData = getByteArrayThumbFromBitmap(covertBase64ToBitmap(thumb));
+
+        // 构造一个Req
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.transaction = buildTransaction("webpage");
+        req.message = msg;
+        req.scene = call.getInt("scene");
+
+        if (!req.checkArgs()) {
+            call.reject(ERROR_INVALID_PARAMETERS);
+            return;
+        }
+        callbackId = call.getCallbackId();
+        if (callbackId != null) {
+            bridge.saveCall(call);
+        }
+
+        // 调用api接口，发送数据到微信
+        wxApi.sendReq(req);
+    }
+
+    /**
+     * 分享图片
+     *
+     * @param call
+     */
+    @PluginMethod
+    public void shareImage(PluginCall call) {
+        String imgUrl = call.getString("imageUrl");
+        //Integer scene = call.getInt("scene");
+        if (imgUrl == null || imgUrl.length() <= 0) {
+            call.reject(ERROR_INVALID_PARAMETERS);
+            return;
+        }
+        String imagePath = getContext().getCacheDir().getAbsolutePath() + "/" + imgUrl;
+        Bitmap bmp = BitmapFactory.decodeFile(imagePath);
+
+        //初始化 WXImageObject 和 WXMediaMessage 对象
+        WXImageObject imgObj = new WXImageObject(bmp);
+        WXMediaMessage msg = new WXMediaMessage();
+        msg.mediaObject = imgObj;
+
+        //设置缩略图
+        msg.thumbData = getByteArrayThumbFromBitmap(bmp);
+
+        //构造一个Req
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.transaction = buildTransaction("img");
+        req.message = msg;
+        req.scene = call.getInt("scene");
+
+        if (!req.checkArgs()) {
+            call.reject(ERROR_INVALID_PARAMETERS);
+            return;
+        }
+        callbackId = call.getCallbackId();
+        if (callbackId != null) {
+            bridge.saveCall(call);
+        }
+
+        //调用api接口，发送数据到微信
+        wxApi.sendReq(req);
+    }
+
+    /**
+     * 分享微信小程序
+     *
+     * @param call
+     */
+    @PluginMethod
+    public void shareMiniProgram(PluginCall call) {
+
+        // String webpageUrl = call.getString("webpageUrl");
+        // String userName = call.getString("userName");
+        // String path = call.getString("path");
+        // String hdImageData = call.getString("hdImageData");
+        // Boolean withShareTicket = call.getBoolean("withShareTicket");
+        // String title = call.getString("title");
+        // String description = call.getString("description");
+        // Integer scene = call.getInt("scene");
+        // Integer miniProgramType = call.getInt("miniProgramType");
+        WXMiniProgramObject miniProgramObj = new WXMiniProgramObject();
+        miniProgramObj.webpageUrl = call.getString("webpageUrl");   // 兼容低版本的网页链接
+        miniProgramObj.miniprogramType = call.getInt("miniProgramType");    // 正式版:0，测试版:1，体验版:2
+        miniProgramObj.userName = call.getString("userName");   // 小程序原始id
+        miniProgramObj.path = call.getString("path");       // 小程序页面路径；对于小游戏，可以只传入 query 部分，来实现传参效果，如：传入 "?foo=bar"
+        miniProgramObj.withShareTicket = call.getBoolean("withShareTicket");
+        WXMediaMessage msg = new WXMediaMessage(miniProgramObj);
+        msg.title = call.getString("title");    // 小程序消息title
+        msg.description = call.getString("description");    // 小程序消息desc
+        String hdImageData = call.getString("hdImageData");
+        if (hdImageData == null || hdImageData.length() <= 0) {
+            call.reject(ERROR_INVALID_PARAMETERS);
+            return;
+        }
+        msg.thumbData = getByteArrayThumbFromBitmap(covertBase64ToBitmap(hdImageData)); // 小程序消息封面图片，小于128k
+
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.transaction = buildTransaction("miniProgram");
+        req.message = msg;
+        req.scene = SendMessageToWX.Req.WXSceneSession;  // 目前只支持会话
+
+        if (!req.checkArgs()) {
+            call.reject(ERROR_INVALID_PARAMETERS);
+            return;
+        }
+        callbackId = call.getCallbackId();
+        if (callbackId != null) {
+            bridge.saveCall(call);
+        }
+
+        wxApi.sendReq(req);
+    }
+
+    /**
+     * 调起微信小程序
+     *
+     * @param call
+     */
+    @PluginMethod
+    public void launchMiniProgram(PluginCall call) {
+
+        WXLaunchMiniProgram.Req req = new WXLaunchMiniProgram.Req();
+        req.userName = call.getString("userName"); // 填小程序原始id
+        req.path = call.getString("path");   //拉起小程序页面的可带参路径，不填默认拉起小程序首页，对于小游戏，可以只传入 query 部分，来实现传参效果，如：传入 "?foo=bar"。
+        req.miniprogramType = call.getInt("miniProgramType");// 可选打开 开发版，体验版和正式版
+
+        if (!req.checkArgs()) {
+            call.reject(ERROR_INVALID_PARAMETERS);
+            return;
+        }
+        callbackId = call.getCallbackId();
+        if (callbackId != null) {
+            bridge.saveCall(call);
+        }
+
+        wxApi.sendReq(req);
+    }
+
+    /**
+     * 微信登录
+     *
+     * @param call
+     */
+    @PluginMethod
+    public void sendAuthRequest(PluginCall call) {
+
+        final SendAuth.Req req = new SendAuth.Req();
+        req.scope = call.getString("scope");
+        req.state = call.getString("state");
+
+        if (!req.checkArgs()) {
+            call.reject(ERROR_INVALID_PARAMETERS);
+            return;
+        }
+        callbackId = call.getCallbackId();
+        if (callbackId != null) {
+            bridge.saveCall(call);
+        }
+
+        wxApi.sendReq(req);
+    }
+
+    /**
+     * 获取微信appId
+     *
+     * @return
+     */
+    private String getWxAppId() {
+        return bridge.getConfig().getString("wechatAppId");
+    }
+
+
+    /**
+     * 获取商户id
+     *
+     * @return
+     */
+    private String getMchId() {
+        return bridge.getConfig().getString("mchid");
+    }
+
+    /**
+     * 向微信注册app
+     */
+    private void registerWeChat() {
+        String wxAppId = getWxAppId();
+        wxApi = WXAPIFactory.createWXAPI(this.getContext(), wxAppId, true);
+        wxApi.registerApp(wxAppId);
+    }
+
+    private String buildTransaction(final String type) {
+        return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
+    }
+
+    private byte[] getByteArrayThumbFromBitmap(Bitmap bmp) {
+        Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
+        bmp.recycle();
+        return Util.bmpToByteArray(thumbBmp, true);
+    }
+
+    private byte[] covertBase64ToByteArray(String base64Str) {
+        return Base64.decode(base64Str, Base64.DEFAULT);
+    }
+
+    private Bitmap covertBase64ToBitmap(String base64Str) {
+        byte[] bytes = Base64.decode(base64Str, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    }
 }
