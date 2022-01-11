@@ -54,7 +54,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                 call.reject(ERROR_WECHAT_RESPONSE_UNKNOWN, "-6");
                 break;
         }
-
+        WechatSDKPlugin.bridge.releaseCall(call);
         finish();
     }
 }
