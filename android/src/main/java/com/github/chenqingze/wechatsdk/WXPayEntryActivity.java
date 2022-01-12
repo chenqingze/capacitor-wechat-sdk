@@ -9,7 +9,6 @@ import static com.github.chenqingze.wechatsdk.Constants.ERROR_WECHAT_RESPONSE_US
 import static com.github.chenqingze.wechatsdk.Constants.WECHAT_RESPONSE_OK;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -19,17 +18,14 @@ import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     public static final String TAG = "Plugin.WechatPay";
-    protected static IWXAPI wxAPI;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        wxAPI = getWxAPI(this);
+        IWXAPI wxAPI = WechatSDKPlugin.getWxAPI(this);
         wxAPI.handleIntent(getIntent(), this);
     }
 
@@ -37,17 +33,30 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        wxAPI.handleIntent(intent, this);
+        IWXAPI wxAPI = WechatSDKPlugin.getWxAPI(this);
+        if (wxAPI == null) {
+            startMainActivity();
+        } else {
+            wxAPI.handleIntent(intent, this);
+        }
     }
+
+    protected void startMainActivity() {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setPackage(getApplicationContext().getPackageName());
+        getApplicationContext().startActivity(intent);
+    }
+
+
     @Override
     public void onReq(BaseReq baseReq) {
-
-        finish();
+        System.out.println(TAG+"==================>Wechat onReq call!");
     }
 
     @Override
     public void onResp(BaseResp resp) {
-        System.out.println("print===================>onResp");
+        System.out.println(TAG+"===================>onResp");
         PluginCall call = WechatSDKPlugin.bridge.getSavedCall(WechatSDKPlugin.callbackId);
         switch (resp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
@@ -77,12 +86,5 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         }
         WechatSDKPlugin.bridge.releaseCall(call);
         finish();
-    }
-
-    public IWXAPI getWxAPI(Context ctx) {
-        if(wxAPI == null) {
-            return WXAPIFactory.createWXAPI(ctx,WechatSDKPlugin.getWxAppId(),false);
-        }
-        return wxAPI;
     }
 }

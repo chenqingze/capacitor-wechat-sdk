@@ -18,7 +18,7 @@ buildscript {
 
 apply plugin: 'com.android.library'
 
-def wechatPackageName = "com.yourapp.id" // 你的appid
+def wechatAppId = "com.yourapp.id" // 微信开发平台配置的包名也就是 applicationId
 android {
     compileSdkVersion project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 30
     defaultConfig {
@@ -28,7 +28,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [
-                applicationId: wechatPackageName
+                applicationId: wechatAppId
         ]
     }
     buildTypes {

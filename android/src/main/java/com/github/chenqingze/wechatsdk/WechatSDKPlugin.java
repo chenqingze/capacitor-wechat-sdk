@@ -4,6 +4,7 @@ import static com.github.chenqingze.wechatsdk.Constants.ERROR_INVALID_PARAMETERS
 import static com.github.chenqingze.wechatsdk.Constants.ERROR_SEND_REQUEST_FAILED;
 import static com.github.chenqingze.wechatsdk.Constants.ERROR_WECHAT_NOT_INSTALLED;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -29,11 +30,11 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 @CapacitorPlugin(name = "WechatSDK")
 public class WechatSDKPlugin extends Plugin {
 
-    public static Bridge bridge;
     private WechatSDK implementation = new WechatSDK();
-    protected IWXAPI wxApi;
-    public static String callbackId;
     private static final int THUMB_SIZE = 150;
+    protected static Bridge bridge;
+    protected static IWXAPI wxApi;
+    protected static String callbackId;
 
     /**
      * 初始化操作
@@ -110,6 +111,8 @@ public class WechatSDKPlugin extends Plugin {
 
         if (!wxApi.sendReq(req)) {
             call.reject(ERROR_SEND_REQUEST_FAILED);
+        } else {
+            call.resolve();
         }
     }
 
@@ -365,6 +368,16 @@ public class WechatSDKPlugin extends Plugin {
         }
     }
 
+    public static IWXAPI getWxAPI(Context ctx) {
+        if (wxApi == null) {
+            String appId = getWxAppId();
+            if (!appId.isEmpty()) {
+                wxApi = WXAPIFactory.createWXAPI(ctx, appId, true);
+            }
+        }
+        return wxApi;
+    }
+
     /**
      * 获取微信appId
      *
@@ -388,9 +401,7 @@ public class WechatSDKPlugin extends Plugin {
      * 向微信注册app
      */
     private void registerWeChat() {
-        String wxAppId = getWxAppId();
-        wxApi = WXAPIFactory.createWXAPI(this.getContext(), wxAppId, true);
-        wxApi.registerApp(wxAppId);
+        wxApi.registerApp(getWxAppId());
     }
 
     private String buildTransaction(final String type) {
