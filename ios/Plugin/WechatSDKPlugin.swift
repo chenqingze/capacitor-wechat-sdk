@@ -92,6 +92,8 @@ public class WechatSDKPlugin: CAPPlugin {
                 print("唤起微信:", success ? "成功" : "失败")
                 if !success{
                     call.reject("唤起微信失败");
+                }else{
+                    call.resolve();
                 }
             }
         }
@@ -105,6 +107,8 @@ public class WechatSDKPlugin: CAPPlugin {
         DispatchQueue.main.async {
             if !WXApi.isWXAppInstalled(){
                 call.reject(WXApiManager.ERROR_WECHAT_NOT_INSTALLED,"-8");
+            }else{
+                call.resolve();
             }
             
         }
@@ -131,6 +135,8 @@ public class WechatSDKPlugin: CAPPlugin {
             WXApi.send(req) { (res) in
                 if !res{
                     call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
+                }else{
+                    call.resolve();
                 }
                 
             }
@@ -175,6 +181,8 @@ public class WechatSDKPlugin: CAPPlugin {
             WXApi.send(req) { (res) in
                 if !res{
                     call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
+                }else{
+                    call.resolve();
                 }
             }
             
@@ -222,6 +230,8 @@ public class WechatSDKPlugin: CAPPlugin {
             WXApi.send(req) { (res) in
                 if !res{
                     call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
+                }else{
+                    call.resolve();
                 }
             }
             
@@ -268,6 +278,8 @@ public class WechatSDKPlugin: CAPPlugin {
             WXApi.send(req) { (res) in
                 if !res{
                     call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
+                }else{
+                    call.resolve();
                 }
             }
         }
@@ -292,6 +304,8 @@ public class WechatSDKPlugin: CAPPlugin {
             WXApi.send(req) { (res) in
                 if !res{
                     call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
+                }else{
+                    call.resolve();
                 }
             }
             
@@ -327,6 +341,8 @@ public class WechatSDKPlugin: CAPPlugin {
             WXApi.send(req){ (res) in
                 if !res{
                     call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
+                }else{
+                    call.resolve();
                 }
             }
             

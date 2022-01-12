@@ -110,6 +110,8 @@ public class WechatSDKPlugin extends Plugin {
 
         if (!wxApi.sendReq(req)) {
             call.reject(ERROR_SEND_REQUEST_FAILED);
+        } else {
+            call.resolve();
         }
     }
 
@@ -147,7 +149,11 @@ public class WechatSDKPlugin extends Plugin {
         }
 
         //调用api接口，发送数据到微信
-        wxApi.sendReq(req);
+        if (!wxApi.sendReq(req)) {
+            call.reject(ERROR_SEND_REQUEST_FAILED);
+        } else {
+            call.resolve();
+        }
     }
 
 
@@ -195,7 +201,11 @@ public class WechatSDKPlugin extends Plugin {
         }
 
         // 调用api接口，发送数据到微信
-        wxApi.sendReq(req);
+        if (!wxApi.sendReq(req)) {
+            call.reject(ERROR_SEND_REQUEST_FAILED);
+        } else {
+            call.resolve();
+        }
     }
 
     /**
@@ -238,7 +248,11 @@ public class WechatSDKPlugin extends Plugin {
         }
 
         //调用api接口，发送数据到微信
-        wxApi.sendReq(req);
+        if (!wxApi.sendReq(req)) {
+            call.reject(ERROR_SEND_REQUEST_FAILED);
+        } else {
+            call.resolve();
+        }
     }
 
     /**
@@ -288,7 +302,11 @@ public class WechatSDKPlugin extends Plugin {
             bridge.saveCall(call);
         }
 
-        wxApi.sendReq(req);
+        if (!wxApi.sendReq(req)) {
+            call.reject(ERROR_SEND_REQUEST_FAILED);
+        } else {
+            call.resolve();
+        }
     }
 
     /**
@@ -313,7 +331,11 @@ public class WechatSDKPlugin extends Plugin {
             bridge.saveCall(call);
         }
 
-        wxApi.sendReq(req);
+        if (!wxApi.sendReq(req)) {
+            call.reject(ERROR_SEND_REQUEST_FAILED);
+        } else {
+            call.resolve();
+        }
     }
 
     /**
@@ -337,7 +359,12 @@ public class WechatSDKPlugin extends Plugin {
             bridge.saveCall(call);
         }
 
-        wxApi.sendReq(req);
+
+        if (!wxApi.sendReq(req)) {
+            call.reject(ERROR_SEND_REQUEST_FAILED);
+        } else {
+            call.resolve();
+        }
     }
 
     /**
