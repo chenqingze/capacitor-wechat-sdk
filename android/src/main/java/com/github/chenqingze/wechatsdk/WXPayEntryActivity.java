@@ -47,8 +47,8 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     public void onResp(BaseResp resp) {
+        System.out.println("print===================>onResp");
         PluginCall call = WechatSDKPlugin.bridge.getSavedCall(WechatSDKPlugin.callbackId);
-        Intent intent = new Intent("wxResp");
         switch (resp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
                 JSObject ret = new JSObject();

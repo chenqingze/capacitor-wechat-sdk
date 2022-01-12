@@ -104,6 +104,7 @@ public class WechatSDKPlugin extends Plugin {
 
         callbackId = call.getCallbackId();
         if (callbackId != null) {
+            System.out.println("print===================>saveCall");
             bridge.saveCall(call);
         }
 
