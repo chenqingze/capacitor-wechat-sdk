@@ -9,15 +9,36 @@ import static com.github.chenqingze.wechatsdk.Constants.ERROR_WECHAT_RESPONSE_US
 import static com.github.chenqingze.wechatsdk.Constants.WECHAT_RESPONSE_OK;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.PluginCall;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
+    public static final String TAG = "Plugin.WechatPay";
+    protected static IWXAPI wxAPI;
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        wxAPI = getWxAPI(this);
+        wxAPI.handleIntent(getIntent(), this);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        wxAPI.handleIntent(intent, this);
+    }
     @Override
     public void onReq(BaseReq baseReq) {
 
@@ -27,7 +48,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     @Override
     public void onResp(BaseResp resp) {
         PluginCall call = WechatSDKPlugin.bridge.getSavedCall(WechatSDKPlugin.callbackId);
-
+        Intent intent = new Intent("wxResp");
         switch (resp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
                 JSObject ret = new JSObject();
@@ -56,5 +77,12 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         }
         WechatSDKPlugin.bridge.releaseCall(call);
         finish();
+    }
+
+    public IWXAPI getWxAPI(Context ctx) {
+        if(wxAPI == null) {
+            return WXAPIFactory.createWXAPI(ctx,WechatSDKPlugin.getWxAppId(),false);
+        }
+        return wxAPI;
     }
 }

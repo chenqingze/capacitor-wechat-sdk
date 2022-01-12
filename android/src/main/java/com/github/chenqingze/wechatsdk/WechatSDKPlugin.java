@@ -29,10 +29,9 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 @CapacitorPlugin(name = "WechatSDK")
 public class WechatSDKPlugin extends Plugin {
 
-    public final static int REQUEST_READ_PHONE_STATE = 1;
     public static Bridge bridge;
     private WechatSDK implementation = new WechatSDK();
-    private IWXAPI wxApi;
+    protected IWXAPI wxApi;
     public static String callbackId;
     private static final int THUMB_SIZE = 150;
 
@@ -110,8 +109,6 @@ public class WechatSDKPlugin extends Plugin {
 
         if (!wxApi.sendReq(req)) {
             call.reject(ERROR_SEND_REQUEST_FAILED);
-        } else {
-            call.resolve();
         }
     }
 
@@ -372,7 +369,7 @@ public class WechatSDKPlugin extends Plugin {
      *
      * @return
      */
-    private String getWxAppId() {
+    public static String getWxAppId() {
         return bridge.getConfig().getString("wechatAppId");
     }
 
