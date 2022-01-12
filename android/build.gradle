@@ -18,7 +18,7 @@ buildscript {
 
 apply plugin: 'com.android.library'
 
-//def wechatPackageName = "com.yourapp.id" // 你的appid
+def wechatPackageName = "com.yourapp.id" // 你的appid
 android {
     compileSdkVersion project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 30
     defaultConfig {
@@ -28,7 +28,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [
-                applicationId: applicationId
+                applicationId: wechatPackageName
         ]
     }
     buildTypes {
