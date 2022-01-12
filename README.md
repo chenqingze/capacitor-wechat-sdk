@@ -31,7 +31,7 @@ npx cap sync
 ### echo(...)
 
 ```typescript
-echo(options: { value: string; }) => Promise<{ value: string; }>
+echo(options: { value: string; }) => Promise<any>
 ```
 
 测试
@@ -40,7 +40,7 @@ echo(options: { value: string; }) => Promise<{ value: string; }>
 | ------------- | ------------------------------- |
 | **`options`** | <code>{ value: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+**Returns:** <code>Promise&lt;any&gt;</code>
 
 --------------------
 
@@ -48,7 +48,7 @@ echo(options: { value: string; }) => Promise<{ value: string; }>
 ### pay(...)
 
 ```typescript
-pay(options: { prepayId: string; packageValue: string; nonceStr: string; timeStamp: string; sign: string; }) => Promise<{ value: string; }>
+pay(options: { prepayId: string; packageValue: string; nonceStr: string; timeStamp: string; sign: string; }) => Promise<any>
 ```
 
 调起微信支付
@@ -57,7 +57,7 @@ pay(options: { prepayId: string; packageValue: string; nonceStr: string; timeSta
 | ------------- | ----------------------------------------------------------------------------------------------------------- |
 | **`options`** | <code>{ prepayId: string; packageValue: string; nonceStr: string; timeStamp: string; sign: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+**Returns:** <code>Promise&lt;any&gt;</code>
 
 --------------------
 
@@ -78,7 +78,7 @@ isInstalled() => Promise<any>
 ### shareText(...)
 
 ```typescript
-shareText(options: { text: string; scene: string; }) => Promise<void>
+shareText(options: { text: string; scene: string; }) => Promise<any>
 ```
 
 分享文本
@@ -87,13 +87,15 @@ shareText(options: { text: string; scene: string; }) => Promise<void>
 | ------------- | --------------------------------------------- |
 | **`options`** | <code>{ text: string; scene: string; }</code> |
 
+**Returns:** <code>Promise&lt;any&gt;</code>
+
 --------------------
 
 
 ### shareLink(...)
 
 ```typescript
-shareLink(options: { url: string; title: string; description: string; thumb?: string; scene: number; }) => Promise<void>
+shareLink(options: { url: string; title: string; description: string; thumb?: string; scene: number; }) => Promise<any>
 ```
 
 分享链接
@@ -102,13 +104,15 @@ shareLink(options: { url: string; title: string; description: string; thumb?: st
 | ------------- | ------------------------------------------------------------------------------------------------ | ------------------- |
 | **`options`** | <code>{ url: string; title: string; description: string; thumb?: string; scene: number; }</code> | thumb - 图片base64字符串 |
 
+**Returns:** <code>Promise&lt;any&gt;</code>
+
 --------------------
 
 
 ### shareImage(...)
 
 ```typescript
-shareImage(options: { imageUrl: string; title: string; description: string; scene: number; }) => Promise<void>
+shareImage(options: { imageUrl: string; title: string; description: string; scene: number; }) => Promise<any>
 ```
 
 分享图片
@@ -117,13 +121,15 @@ shareImage(options: { imageUrl: string; title: string; description: string; scen
 | ------------- | ------------------------------------------------------------------------------------- | ------------------- |
 | **`options`** | <code>{ imageUrl: string; title: string; description: string; scene: number; }</code> |  imageUrl - 图片的本地路径 |
 
+**Returns:** <code>Promise&lt;any&gt;</code>
+
 --------------------
 
 
 ### shareMiniProgram(...)
 
 ```typescript
-shareMiniProgram(options: { webpageUrl: string; userName: string; path: string; hdImageData: string; withShareTicket: boolean; miniProgramType: number; title: string; description: string; scene: number; }) => Promise<void>
+shareMiniProgram(options: { webpageUrl: string; userName: string; path: string; hdImageData: string; withShareTicket: boolean; miniProgramType: number; title: string; description: string; scene: number; }) => Promise<any>
 ```
 
 分享微信小程序
@@ -132,13 +138,15 @@ shareMiniProgram(options: { webpageUrl: string; userName: string; path: string; 
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
 | **`options`** | <code>{ webpageUrl: string; userName: string; path: string; hdImageData: string; withShareTicket: boolean; miniProgramType: number; title: string; description: string; scene: number; }</code> |  hdImageData - 图片base64字符串 |
 
+**Returns:** <code>Promise&lt;any&gt;</code>
+
 --------------------
 
 
 ### launchMiniProgram(...)
 
 ```typescript
-launchMiniProgram(options: { userName: string; path: string; miniProgramType: number; }) => Promise<void>
+launchMiniProgram(options: { userName: string; path: string; miniProgramType: number; }) => Promise<any>
 ```
 
 调起微信小程序
@@ -147,13 +155,15 @@ launchMiniProgram(options: { userName: string; path: string; miniProgramType: nu
 | ------------- | ------------------------------------------------------------------------- |
 | **`options`** | <code>{ userName: string; path: string; miniProgramType: number; }</code> |
 
+**Returns:** <code>Promise&lt;any&gt;</code>
+
 --------------------
 
 
 ### sendAuthRequest(...)
 
 ```typescript
-sendAuthRequest(options: { scope: string; state: string; }) => Promise<void>
+sendAuthRequest(options: { scope: string; state: string; }) => Promise<any>
 ```
 
 微信登录
@@ -161,6 +171,8 @@ sendAuthRequest(options: { scope: string; state: string; }) => Promise<void>
 | Param         | Type                                           |
 | ------------- | ---------------------------------------------- |
 | **`options`** | <code>{ scope: string; state: string; }</code> |
+
+**Returns:** <code>Promise&lt;any&gt;</code>
 
 --------------------
 
