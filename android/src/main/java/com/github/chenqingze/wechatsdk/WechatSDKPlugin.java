@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.util.Log;
 
 import com.getcapacitor.Bridge;
 import com.getcapacitor.JSObject;
@@ -15,6 +16,7 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.github.chenqingze.wechatsdk.wxapi.WXPayEntryActivity;
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
@@ -32,9 +34,9 @@ public class WechatSDKPlugin extends Plugin {
 
     private WechatSDK implementation = new WechatSDK();
     private static final int THUMB_SIZE = 150;
-    protected static Bridge bridge;
-    protected static IWXAPI wxApi;
-    protected static String callbackId;
+    public static Bridge bridge;
+    public static IWXAPI wxApi;
+    public static String callbackId;
 
     /**
      * 初始化操作
@@ -88,9 +90,8 @@ public class WechatSDKPlugin extends Plugin {
 
         bridge = this.getBridge();
         //        requestPermissions();
-        String appId = getWxAppId(); //appid
-        PayReq req = new PayReq();
-        req.appId = appId;
+        PayReq req = new PayReq(); // appId
+        req.appId = getWxAppId();;
         req.partnerId = this.getMchId(); // 商户号
         req.prepayId = call.getString("prepayId"); // 预支付交易会话标识
         req.nonceStr = call.getString("nonceStr"); // 随机字符串
@@ -105,14 +106,12 @@ public class WechatSDKPlugin extends Plugin {
 
         callbackId = call.getCallbackId();
         if (callbackId != null) {
-            System.out.println("print===================>saveCall");
+            Log.d(WXPayEntryActivity.TAG , "print===================>saveCall");
             bridge.saveCall(call);
         }
 
         if (!wxApi.sendReq(req)) {
             call.reject(ERROR_SEND_REQUEST_FAILED);
-        } else {
-            call.resolve();
         }
     }
 
@@ -370,10 +369,7 @@ public class WechatSDKPlugin extends Plugin {
 
     public static IWXAPI getWxAPI(Context ctx) {
         if (wxApi == null) {
-            String appId = getWxAppId();
-            if (!appId.isEmpty()) {
-                wxApi = WXAPIFactory.createWXAPI(ctx, appId, true);
-            }
+            wxApi = WXAPIFactory.createWXAPI(ctx, getWxAppId(), true);
         }
         return wxApi;
     }
@@ -401,7 +397,7 @@ public class WechatSDKPlugin extends Plugin {
      * 向微信注册app
      */
     private void registerWeChat() {
-        wxApi.registerApp(getWxAppId());
+        getWxAPI(this.getContext()).registerApp(getWxAppId());
     }
 
     private String buildTransaction(final String type) {
@@ -419,7 +415,7 @@ public class WechatSDKPlugin extends Plugin {
     }
 
     private Bitmap covertBase64ToBitmap(String base64Str) {
-        byte[] bytes = Base64.decode(base64Str, Base64.DEFAULT);
+        byte[] bytes = covertBase64ToByteArray(base64Str);
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 }

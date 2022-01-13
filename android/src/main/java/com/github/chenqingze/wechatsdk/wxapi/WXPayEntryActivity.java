@@ -1,4 +1,4 @@
-package com.github.chenqingze.wechatsdk;
+package com.github.chenqingze.wechatsdk.wxapi;
 
 import static com.github.chenqingze.wechatsdk.Constants.ERROR_WECHAT_RESPONSE_AUTH_DENIED;
 import static com.github.chenqingze.wechatsdk.Constants.ERROR_WECHAT_RESPONSE_COMMON;
@@ -11,9 +11,11 @@ import static com.github.chenqingze.wechatsdk.Constants.WECHAT_RESPONSE_OK;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.PluginCall;
+import com.github.chenqingze.wechatsdk.WechatSDKPlugin;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
@@ -21,9 +23,10 @@ import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     public static final String TAG = "Plugin.WechatPay";
-
+    private IWXAPI api;
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG , "==================>onCreate");
         super.onCreate(savedInstanceState);
         IWXAPI wxAPI = WechatSDKPlugin.getWxAPI(this);
         wxAPI.handleIntent(getIntent(), this);
@@ -31,32 +34,22 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.d(TAG , "==================>onNewIntent");
         super.onNewIntent(intent);
         setIntent(intent);
         IWXAPI wxAPI = WechatSDKPlugin.getWxAPI(this);
-        if (wxAPI == null) {
-            startMainActivity();
-        } else {
-            wxAPI.handleIntent(intent, this);
-        }
-    }
-
-    protected void startMainActivity() {
-        Intent intent = new Intent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setPackage(getApplicationContext().getPackageName());
-        getApplicationContext().startActivity(intent);
+        wxAPI.handleIntent(intent, this);
     }
 
 
     @Override
     public void onReq(BaseReq baseReq) {
-        System.out.println(TAG+"==================>Wechat onReq call!");
+        Log.d(TAG , "==================>Wechat onReq call!");
     }
 
     @Override
     public void onResp(BaseResp resp) {
-        System.out.println(TAG+"===================>onResp");
+        Log.d(TAG,"===================>onResp");
         PluginCall call = WechatSDKPlugin.bridge.getSavedCall(WechatSDKPlugin.callbackId);
         switch (resp.errCode) {
             case BaseResp.ErrCode.ERR_OK:

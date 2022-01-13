@@ -3,11 +3,17 @@
 
     <application>
         <activity
-            android:name="com.github.chenqingze.wechatsdk.WXPayEntryActivity"
+            android:name="com.github.chenqingze.wechatsdk.wxapi.WXPayEntryActivity"
             android:exported="true"
             android:label="WXPayEntryActivity"
             android:launchMode="singleTask"
-            android:taskAffinity="${applicationId}"
+            android:taskAffinity="${wechatPackageName}"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity-alias
+            android:name="${wechatPackageName}.wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:targetActivity="com.github.chenqingze.wechatsdk.wxapi.WXPayEntryActivity" >
+        </activity-alias>
     </application>
 </manifest>
