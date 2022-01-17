@@ -7,6 +7,7 @@ import static com.github.chenqingze.wechatsdk.Constants.ERROR_WECHAT_NOT_INSTALL
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.util.Log;
 
 import com.getcapacitor.Bridge;
 import com.getcapacitor.JSObject;
@@ -25,6 +26,10 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 @CapacitorPlugin(name = "WechatSDK")
 public class WechatSDKPlugin extends Plugin {
@@ -272,8 +277,12 @@ public class WechatSDKPlugin extends Plugin {
             call.reject(ERROR_INVALID_PARAMETERS);
             return;
         }
-        msg.thumbData = getByteArrayThumbFromBitmap(covertBase64ToBitmap(hdImageData)); // 小程序消息封面图片，小于128k
-
+        try {
+            msg.thumbData = getByteArrayThumbFromBitmap(loadBitmapFromUrl(hdImageData)); // 小程序消息封面图片，小于128k
+        } catch (IOException e) {
+            Log.e(Util.TAG, "获取网络图片为null");
+            e.printStackTrace();
+        }
         SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.transaction = buildTransaction("miniProgram");
         req.message = msg;
@@ -386,4 +395,11 @@ public class WechatSDKPlugin extends Plugin {
         byte[] bytes = Base64.decode(base64Str, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
+
+    private Bitmap loadBitmapFromUrl(String url) throws IOException {
+        try (InputStream is = new URL(url).openStream()) {
+            return BitmapFactory.decodeStream(is);
+        }
+    }
+
 }
