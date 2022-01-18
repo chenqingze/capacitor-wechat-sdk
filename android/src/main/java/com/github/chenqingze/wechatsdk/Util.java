@@ -19,7 +19,7 @@ import java.net.URLConnection;
 
 public class Util {
 
-    private static final String TAG = "WechatSDKPlugin.Util";
+	public static final String TAG = "WechatSDKPlugin.Util";
 
     public static byte[] bmpToByteArray(final Bitmap bmp, final boolean needRecycle) {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
