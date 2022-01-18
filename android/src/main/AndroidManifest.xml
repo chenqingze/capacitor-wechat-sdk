@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.chenqingze.wechatsdk">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <application>
         <activity
             android:name="com.github.chenqingze.wechatsdk.wxapi.WXPayEntryActivity"
@@ -14,7 +14,20 @@
         <activity-alias
             android:name="${wechatPackageName}.wxapi.WXPayEntryActivity"
             android:exported="true"
-            android:targetActivity="com.github.chenqingze.wechatsdk.wxapi.WXPayEntryActivity" >
-        </activity-alias>
+            android:targetActivity="com.github.chenqingze.wechatsdk.wxapi.WXPayEntryActivity" />
+
+
+        <activity
+            android:name="com.github.chenqingze.wechatsdk.wxapi.WXEntryActivity"
+            android:exported="true"
+            android:label="WXEntryActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity="${wechatPackageName}"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity-alias
+            android:name="${wechatPackageName}.wxapi.WXEntryActivity"
+            android:exported="true"
+            android:targetActivity="com.github.chenqingze.wechatsdk.wxapi.WXEntryActivity" />
     </application>
 </manifest>

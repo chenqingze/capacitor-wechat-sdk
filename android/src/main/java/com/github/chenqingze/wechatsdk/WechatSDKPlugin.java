@@ -7,7 +7,6 @@ import static com.github.chenqingze.wechatsdk.Constants.ERROR_WECHAT_NOT_INSTALL
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.util.Log;
 
 import com.getcapacitor.Bridge;
@@ -16,7 +15,6 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
-import com.github.chenqingze.wechatsdk.wxapi.WXPayEntryActivity;
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
@@ -30,14 +28,12 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 
 @CapacitorPlugin(name = "WechatSDK")
 public class WechatSDKPlugin extends Plugin {
 
     private WechatSDK implementation = new WechatSDK();
-    private static final int THUMB_SIZE = 150;
+
     public static Bridge bridge;
     public static IWXAPI wxApi;
     public static String callbackId;
@@ -95,7 +91,8 @@ public class WechatSDKPlugin extends Plugin {
         bridge = this.getBridge();
         //        requestPermissions();
         PayReq req = new PayReq(); // appId
-        req.appId = getWxAppId();;
+        req.appId = getWxAppId();
+        ;
         req.partnerId = this.getMchId(); // 商户号
         req.prepayId = call.getString("prepayId"); // 预支付交易会话标识
         req.nonceStr = call.getString("nonceStr"); // 随机字符串
@@ -110,7 +107,7 @@ public class WechatSDKPlugin extends Plugin {
 
         callbackId = call.getCallbackId();
         if (callbackId != null) {
-            Log.d(WXPayEntryActivity.TAG , "print===================>saveCall");
+            Log.d(Constants.TAG, "print===================>saveCall");
             bridge.saveCall(call);
         }
 
@@ -155,8 +152,6 @@ public class WechatSDKPlugin extends Plugin {
         //调用api接口，发送数据到微信
         if (!wxApi.sendReq(req)) {
             call.reject(ERROR_SEND_REQUEST_FAILED);
-        } else {
-            call.resolve();
         }
     }
 
@@ -187,7 +182,7 @@ public class WechatSDKPlugin extends Plugin {
             call.reject(ERROR_INVALID_PARAMETERS);
             return;
         }
-        msg.thumbData = getByteArrayThumbFromBitmap(covertBase64ToBitmap(thumb));
+        msg.thumbData = Util.getByteArrayThumbFromBitmap(Util.covertBase64ToBitmap(thumb));
 
         // 构造一个Req
         SendMessageToWX.Req req = new SendMessageToWX.Req();
@@ -207,8 +202,6 @@ public class WechatSDKPlugin extends Plugin {
         // 调用api接口，发送数据到微信
         if (!wxApi.sendReq(req)) {
             call.reject(ERROR_SEND_REQUEST_FAILED);
-        } else {
-            call.resolve();
         }
     }
 
@@ -234,7 +227,7 @@ public class WechatSDKPlugin extends Plugin {
         msg.mediaObject = imgObj;
 
         //设置缩略图
-        msg.thumbData = getByteArrayThumbFromBitmap(bmp);
+        msg.thumbData = Util.getByteArrayThumbFromBitmap(bmp);
 
         //构造一个Req
         SendMessageToWX.Req req = new SendMessageToWX.Req();
@@ -254,8 +247,6 @@ public class WechatSDKPlugin extends Plugin {
         //调用api接口，发送数据到微信
         if (!wxApi.sendReq(req)) {
             call.reject(ERROR_SEND_REQUEST_FAILED);
-        } else {
-            call.resolve();
         }
     }
 
@@ -291,9 +282,9 @@ public class WechatSDKPlugin extends Plugin {
             return;
         }
         try {
-            msg.thumbData = getByteArrayThumbFromBitmap(loadBitmapFromUrl(hdImageData)); // 小程序消息封面图片，小于128k
+            msg.thumbData = Util.getByteArrayThumbFromBitmap(Util.loadBitmapFromUrl(hdImageData)); // 小程序消息封面图片，小于128k
         } catch (IOException e) {
-            Log.e(Util.TAG, "获取网络图片为null");
+            Log.e(Constants.TAG, "获取网络图片为null");
             e.printStackTrace();
         }
         SendMessageToWX.Req req = new SendMessageToWX.Req();
@@ -312,8 +303,6 @@ public class WechatSDKPlugin extends Plugin {
 
         if (!wxApi.sendReq(req)) {
             call.reject(ERROR_SEND_REQUEST_FAILED);
-        } else {
-            call.resolve();
         }
     }
 
@@ -341,8 +330,6 @@ public class WechatSDKPlugin extends Plugin {
 
         if (!wxApi.sendReq(req)) {
             call.reject(ERROR_SEND_REQUEST_FAILED);
-        } else {
-            call.resolve();
         }
     }
 
@@ -370,8 +357,6 @@ public class WechatSDKPlugin extends Plugin {
 
         if (!wxApi.sendReq(req)) {
             call.reject(ERROR_SEND_REQUEST_FAILED);
-        } else {
-            call.resolve();
         }
     }
 
@@ -412,25 +397,5 @@ public class WechatSDKPlugin extends Plugin {
         return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
     }
 
-    private byte[] getByteArrayThumbFromBitmap(Bitmap bmp) {
-        Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
-        bmp.recycle();
-        return Util.bmpToByteArray(thumbBmp, true);
-    }
-
-    private byte[] covertBase64ToByteArray(String base64Str) {
-        return Base64.decode(base64Str, Base64.DEFAULT);
-    }
-
-    private Bitmap covertBase64ToBitmap(String base64Str) {
-        byte[] bytes = covertBase64ToByteArray(base64Str);
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-    }
-
-    private Bitmap loadBitmapFromUrl(String url) throws IOException {
-        try (InputStream is = new URL(url).openStream()) {
-            return BitmapFactory.decodeStream(is);
-        }
-    }
 
 }

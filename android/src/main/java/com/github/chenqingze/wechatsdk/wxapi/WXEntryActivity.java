@@ -22,11 +22,11 @@ import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 
-public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
+public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(Constants.TAG , "WXPayEntryActivity==================>onCreate");
+        Log.d(Constants.TAG , "WXEntryActivity==================>onCreate");
         super.onCreate(savedInstanceState);
         IWXAPI wxAPI = WechatSDKPlugin.getWxAPI(this);
         wxAPI.handleIntent(getIntent(), this);
@@ -34,24 +34,23 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Log.d(Constants.TAG, "WXPayEntryActivity==================>onNewIntent");
+        Log.d(Constants.TAG, "WXEntryActivity==================>onNewIntent");
         super.onNewIntent(intent);
         setIntent(intent);
         IWXAPI wxAPI = WechatSDKPlugin.getWxAPI(this);
         wxAPI.handleIntent(intent, this);
     }
 
-
     @Override
     public void onReq(BaseReq baseReq) {
-        Log.d(Constants.TAG , "WXPayEntryActivity==================>Wechat onReq call!");
+        Log.d(Constants.TAG , "WXEntryActivity==================>Wechat onReq call!");
     }
 
     @Override
-    public void onResp(BaseResp resp) {
-        Log.d(Constants.TAG,"WXPayEntryActivity===================>onResp");
+    public void onResp(BaseResp baseResp) {
+        Log.d(Constants.TAG,"WXEntryActivity===================>onResp");
         PluginCall call = WechatSDKPlugin.bridge.getSavedCall(WechatSDKPlugin.callbackId);
-        switch (resp.errCode) {
+        switch (baseResp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
                 JSObject ret = new JSObject();
                 ret.put("code", 0);

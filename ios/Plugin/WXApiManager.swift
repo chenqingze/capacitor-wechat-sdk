@@ -9,9 +9,6 @@
 import Foundation
 import Capacitor
 
-/**
- * 接收并处理来自微信终端程序的事件消息，暂时用不到，用ts处理就好
- */
 class WXApiManager:NSObject,WXApiDelegate{
     
     static let sharedInstance = WXApiManager();

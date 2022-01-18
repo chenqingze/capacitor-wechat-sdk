@@ -3,6 +3,7 @@ package com.github.chenqingze.wechatsdk;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Log;
 
 import org.junit.Assert;
@@ -19,7 +20,10 @@ import java.net.URLConnection;
 
 public class Util {
 
-	public static final String TAG = "WechatSDKPlugin.Util";
+
+    private static final int MAX_DECODE_PICTURE_SIZE = 1920 * 1440;
+    private static final int THUMB_SIZE = 150;
+
 
     public static byte[] bmpToByteArray(final Bitmap bmp, final boolean needRecycle) {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -83,7 +87,7 @@ public class Util {
 
         File file = new File(fileName);
         if (!file.exists()) {
-            Log.i(TAG, "readFromFile: file not found");
+            Log.i(Constants.TAG, "readFromFile: file not found");
             return null;
         }
 
@@ -91,18 +95,18 @@ public class Util {
             len = (int) file.length();
         }
 
-        Log.d(TAG, "readFromFile : offset = " + offset + " len = " + len + " offset + len = " + (offset + len));
+        Log.d(Constants.TAG, "readFromFile : offset = " + offset + " len = " + len + " offset + len = " + (offset + len));
 
         if (offset < 0) {
-            Log.e(TAG, "readFromFile invalid offset:" + offset);
+            Log.e(Constants.TAG, "readFromFile invalid offset:" + offset);
             return null;
         }
         if (len <= 0) {
-            Log.e(TAG, "readFromFile invalid len:" + len);
+            Log.e(Constants.TAG, "readFromFile invalid len:" + len);
             return null;
         }
         if (offset + len > (int) file.length()) {
-            Log.e(TAG, "readFromFile invalid file len:" + file.length());
+            Log.e(Constants.TAG, "readFromFile invalid file len:" + file.length());
             return null;
         }
 
@@ -115,13 +119,12 @@ public class Util {
             in.close();
 
         } catch (Exception e) {
-            Log.e(TAG, "readFromFile : errMsg = " + e.getMessage());
+            Log.e(Constants.TAG, "readFromFile : errMsg = " + e.getMessage());
             e.printStackTrace();
         }
         return b;
     }
 
-    private static final int MAX_DECODE_PICTURE_SIZE = 1920 * 1440;
 
     public static Bitmap extractThumbNail(final String path, final int height, final int width, final boolean crop) {
         Assert.assertTrue(path != null && !path.equals("") && height > 0 && width > 0);
@@ -136,10 +139,10 @@ public class Util {
                 tmp = null;
             }
 
-            Log.d(TAG, "extractThumbNail: round=" + width + "x" + height + ", crop=" + crop);
+            Log.d(Constants.TAG, "extractThumbNail: round=" + width + "x" + height + ", crop=" + crop);
             final double beY = options.outHeight * 1.0 / height;
             final double beX = options.outWidth * 1.0 / width;
-            Log.d(TAG, "extractThumbNail: extract beX = " + beX + ", beY = " + beY);
+            Log.d(Constants.TAG, "extractThumbNail: extract beX = " + beX + ", beY = " + beY);
             options.inSampleSize = (int) (crop ? (beY > beX ? beX : beY) : (beY < beX ? beX : beY));
             if (options.inSampleSize <= 1) {
                 options.inSampleSize = 1;
@@ -168,14 +171,14 @@ public class Util {
 
             options.inJustDecodeBounds = false;
 
-            Log.i(TAG, "bitmap required size=" + newWidth + "x" + newHeight + ", orig=" + options.outWidth + "x" + options.outHeight + ", sample=" + options.inSampleSize);
+            Log.i(Constants.TAG, "bitmap required size=" + newWidth + "x" + newHeight + ", orig=" + options.outWidth + "x" + options.outHeight + ", sample=" + options.inSampleSize);
             Bitmap bm = BitmapFactory.decodeFile(path, options);
             if (bm == null) {
-                Log.e(TAG, "bitmap decode failed");
+                Log.e(Constants.TAG, "bitmap decode failed");
                 return null;
             }
 
-            Log.i(TAG, "bitmap decoded size=" + bm.getWidth() + "x" + bm.getHeight());
+            Log.i(Constants.TAG, "bitmap decoded size=" + bm.getWidth() + "x" + bm.getHeight());
             final Bitmap scale = Bitmap.createScaledBitmap(bm, newWidth, newHeight, true);
             if (scale != null) {
                 bm.recycle();
@@ -190,12 +193,12 @@ public class Util {
 
                 bm.recycle();
                 bm = cropped;
-                Log.i(TAG, "bitmap croped size=" + bm.getWidth() + "x" + bm.getHeight());
+                Log.i(Constants.TAG, "bitmap croped size=" + bm.getWidth() + "x" + bm.getHeight());
             }
             return bm;
 
         } catch (final OutOfMemoryError e) {
-            Log.e(TAG, "decode bitmap failed: " + e.getMessage());
+            Log.e(Constants.TAG, "decode bitmap failed: " + e.getMessage());
             options = null;
         }
 
@@ -210,4 +213,52 @@ public class Util {
         }
         return def;
     }
+
+
+    /**
+     * 压缩位图并转byte[]
+     *
+     * @param bmp
+     * @return
+     */
+    public static byte[] getByteArrayThumbFromBitmap(Bitmap bmp) {
+        Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
+        bmp.recycle();
+        return Util.bmpToByteArray(thumbBmp, true);
+    }
+
+    /**
+     * base64 字符串转byte[]
+     *
+     * @param base64Str
+     * @return
+     */
+    public static byte[] covertBase64ToByteArray(String base64Str) {
+        return Base64.decode(base64Str, Base64.DEFAULT);
+    }
+
+    /**
+     * base64 字符串转位图
+     *
+     * @param base64Str
+     * @return
+     */
+    public static Bitmap covertBase64ToBitmap(String base64Str) {
+        byte[] bytes = covertBase64ToByteArray(base64Str);
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    }
+
+    /**
+     * 远程加载url图片到位图
+     *
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    public static Bitmap loadBitmapFromUrl(String url) throws IOException {
+        try (InputStream is = new URL(url).openStream()) {
+            return BitmapFactory.decodeStream(is);
+        }
+    }
+
 }

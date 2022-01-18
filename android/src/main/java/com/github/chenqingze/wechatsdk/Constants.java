@@ -1,6 +1,8 @@
 package com.github.chenqingze.wechatsdk;
 
 public interface Constants {
+    String TAG = "WechatSDKPlugin.Util";
+
     String ERROR_INVALID_PARAMETERS = "参数格式错误";
     String ERROR_WECHAT_NOT_INSTALLED = "未安装微信";
     String ERROR_SEND_REQUEST_FAILED = "发送请求失败";
