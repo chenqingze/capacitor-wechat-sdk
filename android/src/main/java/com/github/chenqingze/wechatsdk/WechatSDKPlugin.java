@@ -92,7 +92,6 @@ public class WechatSDKPlugin extends Plugin {
         //        requestPermissions();
         PayReq req = new PayReq(); // appId
         req.appId = getWxAppId();
-        ;
         req.partnerId = this.getMchId(); // 商户号
         req.prepayId = call.getString("prepayId"); // 预支付交易会话标识
         req.nonceStr = call.getString("nonceStr"); // 随机字符串
@@ -286,6 +285,7 @@ public class WechatSDKPlugin extends Plugin {
         } catch (IOException e) {
             Log.e(Constants.TAG, "获取网络图片为null");
             e.printStackTrace();
+            call.reject("获取网络图片异常");
         }
         SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.transaction = buildTransaction("miniProgram");

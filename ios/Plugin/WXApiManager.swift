@@ -25,11 +25,11 @@ class WXApiManager:NSObject,WXApiDelegate{
     static let  ERROR_WECHAT_RESPONSE_UNKNOWN = "未知错误";
     
     
-    func onReq(_ req: BaseReq) {
+    public func onReq(_ req: BaseReq) {
         
     }
     
-    func onResp(_ resp: BaseResp) {
+    public func onResp(_ resp: BaseResp) {
         print("微信响应回调");
         self.wechatCallback(resp)
     }
