@@ -24,7 +24,6 @@ public class Util {
     private static final int MAX_DECODE_PICTURE_SIZE = 1920 * 1440;
     private static final int THUMB_SIZE = 150;
 
-
     public static byte[] bmpToByteArray(final Bitmap bmp, final boolean needRecycle) {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         bmp.compress(CompressFormat.PNG, 100, output);
@@ -255,10 +254,27 @@ public class Util {
      * @return
      * @throws IOException
      */
-    public static Bitmap loadBitmapFromUrl(String url) throws IOException {
+    public static Bitmap loadBitmapFromUrl(String url) {
+//        try {
+//            URLConnection urlCon = new URL(url).openConnection();
+//            urlCon.setConnectTimeout(15000);
+//            urlCon.setReadTimeout(15000);
+//            urlCon.setAllowUserInteraction(false);
+//            urlCon.setDoOutput(true);
+//            InputStream is = urlCon.getInputStream();
+//            return BitmapFactory.decodeStream(is);
+//        }catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+
         try (InputStream is = new URL(url).openStream()) {
             return BitmapFactory.decodeStream(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
+
 
 }

@@ -27,8 +27,6 @@ import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-import java.io.IOException;
-
 @CapacitorPlugin(name = "WechatSDK")
 public class WechatSDKPlugin extends Plugin {
 
@@ -280,13 +278,9 @@ public class WechatSDKPlugin extends Plugin {
             call.reject(ERROR_INVALID_PARAMETERS);
             return;
         }
-        try {
-            msg.thumbData = Util.getByteArrayThumbFromBitmap(Util.loadBitmapFromUrl(hdImageData)); // 小程序消息封面图片，小于128k
-        } catch (IOException e) {
-            Log.e(Constants.TAG, "获取网络图片为null");
-            e.printStackTrace();
-            call.reject("获取网络图片异常");
-        }
+
+        msg.thumbData = Util.getByteArrayThumbFromBitmap(Util.loadBitmapFromUrl(hdImageData)); // 小程序消息封面图片，小于128k
+
         SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.transaction = buildTransaction("miniProgram");
         req.message = msg;
