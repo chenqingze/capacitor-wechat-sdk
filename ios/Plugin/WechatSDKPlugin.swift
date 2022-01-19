@@ -89,9 +89,8 @@ public class WechatSDKPlugin: CAPPlugin {
             debugPrint("微信支付调起url:partnerId-->",partnerId,"prepayId-->",prepayId,"nonceStr-->",nonceStr,"timeStamp-->",timeStamp,"package-->",package,"sign-->",sign,separator: " :")
             
             WXApi.send(req) {success in
-                print("唤起微信:", success ? "成功" : "失败")
                 if !success{
-                    call.reject("唤起微信失败");
+                    call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
                 }
             }
         }

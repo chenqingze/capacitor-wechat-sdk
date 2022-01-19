@@ -286,10 +286,10 @@ public class WechatSDKPlugin extends Plugin {
         req.message = msg;
         req.scene = SendMessageToWX.Req.WXSceneSession;  // 目前只支持会话
 
-        if (!req.checkArgs()) {
-            call.reject(ERROR_INVALID_PARAMETERS);
-            return;
-        }
+//        if (!req.checkArgs()) {
+//            call.reject(ERROR_INVALID_PARAMETERS);
+//            return;
+//        }
         callbackId = call.getCallbackId();
         if (callbackId != null) {
             bridge.saveCall(call);
