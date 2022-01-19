@@ -3,11 +3,13 @@ package com.github.chenqingze.wechatsdk;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.util.Base64;
 import android.util.Log;
 
 import org.junit.Assert;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -247,33 +249,77 @@ public class Util {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 
-    /**
-     * 远程加载url图片到位图
-     *
-     * @param url
-     * @return
-     * @throws IOException
-     */
-    public static Bitmap loadBitmapFromUrl(String url) {
-//        try {
-//            URLConnection urlCon = new URL(url).openConnection();
-//            urlCon.setConnectTimeout(15000);
-//            urlCon.setReadTimeout(15000);
-//            urlCon.setAllowUserInteraction(false);
-//            urlCon.setDoOutput(true);
-//            InputStream is = urlCon.getInputStream();
-//            return BitmapFactory.decodeStream(is);
-//        }catch (IOException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
+    //url转bitmap
+    public static Bitmap getBitmap(String url) {
+        Bitmap bm = null;
+        try {
+            URL iconUrl = new URL(url);
+            URLConnection conn = iconUrl.openConnection();
+            HttpURLConnection http = (HttpURLConnection) conn;
 
-        try (InputStream is = new URL(url).openStream()) {
-            return BitmapFactory.decodeStream(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            int length = http.getContentLength();
+
+            conn.connect();
+            // 获得图像的字符流
+            InputStream is = conn.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is, length);
+            bm = BitmapFactory.decodeStream(bis);
+            bis.close();
+            is.close();// 关闭流
         }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bm;
+    }
+
+    public static boolean isOverSize(Bitmap bitmap, int maxSize) {
+        // 将bitmap放至数组中，意在bitmap的大小（与实际读取的原文件要大）
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        // 将字节换成KB
+        double mid = b.length / 1024;
+        // 判断bitmap占用空间是否大于允许最大空间 如果大于则压缩 小于则不压缩
+        return mid > maxSize;
+    }
+
+    /**
+     * Bitmap转换成byte[]并且进行压缩,压缩到不大于 128 maxkb
+     *
+     * @param bitMap
+     * @return
+     */
+    public static Bitmap imageZoom(Bitmap bitMap) {
+        //图片允许最大空间 单位：KB
+        double maxSize = 128.00;
+        //将bitmap放至数组中，意在bitmap的大小（与实际读取的原文件要大）
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitMap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] b = baos.toByteArray();
+        //将字节换成KB
+        double mid = b.length / 1024;
+        //获取bitmap大小 是允许最大大小的多少倍
+        double i = mid / maxSize;
+        //开始压缩 此处用到平方根 将宽带和高度压缩掉对应的平方根倍 （1.保持刻度和高度和原bitmap比率一致，压缩后也达到了最大大小占用空间的大小）
+        return zoomImage(bitMap, bitMap.getWidth() / Math.sqrt(i), bitMap.getHeight() / Math.sqrt(i) * 0.8);
+    }
+
+    public static Bitmap zoomImage(Bitmap bgimage, double newWidth,
+                                   double newHeight) {
+        // 获取这个图片的宽和高
+        float width = bgimage.getWidth();
+        float height = bgimage.getHeight();
+        // 创建操作图片用的matrix对象
+        Matrix matrix = new Matrix();
+        // 计算宽高缩放率
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // 缩放图片动作
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap bitmap = Bitmap.createBitmap(bgimage, 0, 0, (int) width,
+                (int) height, matrix, true);
+        return bitmap;
     }
 
 

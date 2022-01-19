@@ -7,6 +7,7 @@ import static com.github.chenqingze.wechatsdk.Constants.ERROR_WECHAT_NOT_INSTALL
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.getcapacitor.Bridge;
@@ -278,18 +279,17 @@ public class WechatSDKPlugin extends Plugin {
             call.reject(ERROR_INVALID_PARAMETERS);
             return;
         }
-
-        msg.thumbData = Util.getByteArrayThumbFromBitmap(Util.loadBitmapFromUrl(hdImageData)); // 小程序消息封面图片，小于128k
+        new DownloadImageTask(msg).execute(hdImageData); // 小程序消息封面图片，小于128k
 
         SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.transaction = buildTransaction("miniProgram");
         req.message = msg;
         req.scene = SendMessageToWX.Req.WXSceneSession;  // 目前只支持会话
 
-//        if (!req.checkArgs()) {
-//            call.reject(ERROR_INVALID_PARAMETERS);
-//            return;
-//        }
+        if (!req.checkArgs()) {
+            call.reject(ERROR_INVALID_PARAMETERS);
+            return;
+        }
         callbackId = call.getCallbackId();
         if (callbackId != null) {
             bridge.saveCall(call);
@@ -391,5 +391,33 @@ public class WechatSDKPlugin extends Plugin {
         return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
     }
 
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        private WXMediaMessage mediaMessage;
+
+        public DownloadImageTask(WXMediaMessage mediaMessage) {
+            this.mediaMessage = mediaMessage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            return Util.getBitmap(urls[0]);
+        }
+
+
+        /*  @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+            showProgressDialog();
+        }*/
+
+        protected void onPostExecute(Bitmap bitmap) {
+            if (Util.isOverSize(bitmap, 128)) {
+                bitmap = Util.imageZoom(bitmap);
+            }
+            this.mediaMessage.thumbData = Util.bmpToByteArray(bitmap, true);
+        }
+    }
 
 }
+
+
