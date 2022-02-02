@@ -40,7 +40,7 @@ export interface WechatSDKPlugin {
   /**
    * 分享微信小程序
    * @param options
-   *  hdImageData - 图片base64字符串
+   *  hdImageData - 图片url地址 例如：http://xxx.com/test.png
    */
   shareMiniProgram(options: { webpageUrl: string, userName: string, path: string, hdImageData: string, withShareTicket: boolean, miniProgramType: number, title: string, description: string, scene: number }): Promise<any>;
 

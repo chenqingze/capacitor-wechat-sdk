@@ -134,9 +134,9 @@ shareMiniProgram(options: { webpageUrl: string; userName: string; path: string; 
 
 分享微信小程序
 
-| Param         | Type                                                                                                                                                                                            | Description                |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| **`options`** | <code>{ webpageUrl: string; userName: string; path: string; hdImageData: string; withShareTicket: boolean; miniProgramType: number; title: string; description: string; scene: number; }</code> |  hdImageData - 图片base64字符串 |
+| Param         | Type                                                                                                                                                                                            | Description                                       |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| **`options`** | <code>{ webpageUrl: string; userName: string; path: string; hdImageData: string; withShareTicket: boolean; miniProgramType: number; title: string; description: string; scene: number; }</code> |  hdImageData - 图片url地址 例如：http://xxx.com/test.png |
 
 **Returns:** <code>Promise&lt;any&gt;</code>
 
