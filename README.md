@@ -1,11 +1,17 @@
 # @capacitor/wechat-sdk
 
-wechat sdk wrapper with capacitor ,support ios and android
+wechat sdk wrapper with capacitor ,support ios and android,本项目为自用项目并未发布到npm仓库，请clone到本地后，使用本地路径安装 : 
+```bash
+npm install /pathto/capacitor-wechat-sdk
+npx cap sync
+
+```
+***下面的安装方式为capacitor自动生成，不可用。 
 
 ## Install
 
 ```bash
-npm install @capacitor/wechat-sdk
+npm install @capacitor/wechat-sdk 
 npx cap sync
 ```
 
