@@ -11,7 +11,7 @@ const config: CapacitorConfig = {
 ```
 
 ### 【iOS配置】
-1、[参考微信官方配置[UniversalLink]并配置URL scheme](https://developers.weixin.qq.com/doc/oplatform/Mobile_App/Access_Guide/iOS.html)  
+1、[参考微信官方配置UniversalLink并配置URL scheme和LSApplicationQueriesSchemes](https://developers.weixin.qq.com/doc/oplatform/Mobile_App/Access_Guide/iOS.html)  
 2、在你的工程文件中选择 Build Setting，在"Other Linker Flags"中加入"-ObjC -all_load"  
 3、修改app/appDelegate.swift，增加或修改下面回调处理：  
 ```
