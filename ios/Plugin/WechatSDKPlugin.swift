@@ -194,10 +194,10 @@ public class WechatSDKPlugin: CAPPlugin {
             
             let documentsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!;
             
-            let imageUrl = documentsUrl.appendingPathComponent(call.getString("imageUrl")!)
+            let image = documentsUrl.appendingPathComponent(call.getString("image")!)
             
             var thumbImage :UIImage? = nil;
-            if let imageData = try? Data(contentsOf: imageUrl) {
+            if let imageData = try? Data(contentsOf: image) {
                 ext.imageData = UIImage(data: imageData)!.pngData()!
                 thumbImage = self.compressImage(UIImage(data: imageData)!, toByte: 65536)
             }

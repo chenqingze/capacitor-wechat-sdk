@@ -23,7 +23,7 @@ export class WechatSDKWeb extends WebPlugin implements WechatSDKPlugin {
         return Promise.resolve(undefined);
     }
 
-    shareImage(options: { imageUrl: string; title: string; description: string; scene: number }): Promise<void> {
+    shareImage(options: { image: string; title: string; description: string; scene: number }): Promise<void> {
         console.log(options);
         return Promise.resolve(undefined);
     }

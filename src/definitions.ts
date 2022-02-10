@@ -26,16 +26,18 @@ export interface WechatSDKPlugin {
   /**
    * 分享链接
    * @param options
-   * thumb - 图片base64字符串
+   * thumb - 图片url地址 例如：http://xxx.com/test.png
    */
   shareLink(options: { url: string, title: string, description: string, thumb?: string, scene: number }): Promise<any>;
 
   /**
-   * 分享图片
+   * 分享图片,可配合@capacitor/filesystem 使用
    * @param options
-   *  imageUrl - 图片的本地路径
+   *  image - 本地图片的名称，如有特殊需求请自行修改获取图片的位置或方式
+   *  ios默认去documentDirectory下寻找
+   *  android默认去 /XXX/yourAppPackageName/cache目录下寻找图片文件
    */
-  shareImage(options: { imageUrl: string, title: string, description: string, scene: number }): Promise<any>;
+  shareImage(options: { image: string, title: string, description: string, scene: number }): Promise<any>;
 
   /**
    * 分享微信小程序

@@ -179,7 +179,14 @@ public class WechatSDKPlugin extends Plugin {
             call.reject(ERROR_INVALID_PARAMETERS);
             return;
         }
-        msg.thumbData = Util.getByteArrayThumbFromBitmap(Util.covertBase64ToBitmap(thumb));
+
+        Bitmap bitmap = Util.getBitmap(thumb);
+
+        if (Util.isOverSize(bitmap, 128)) {
+            bitmap = Util.imageZoom(bitmap);
+        }
+
+        msg.setThumbImage(bitmap); // 小程序消息封面图片，小于128k
 
         // 构造一个Req
         SendMessageToWX.Req req = new SendMessageToWX.Req();
@@ -209,13 +216,13 @@ public class WechatSDKPlugin extends Plugin {
      */
     @PluginMethod
     public void shareImage(PluginCall call) {
-        String imgUrl = call.getString("imageUrl");
+        String image = call.getString("image");
         //Integer scene = call.getInt("scene");
-        if (imgUrl == null || imgUrl.length() <= 0) {
+        if (image == null || image.length() <= 0) {
             call.reject(ERROR_INVALID_PARAMETERS);
             return;
         }
-        String imagePath = getContext().getCacheDir().getAbsolutePath() + "/" + imgUrl;
+        String imagePath = getContext().getCacheDir().getAbsolutePath() + "/" + image;
         Bitmap bmp = BitmapFactory.decodeFile(imagePath);
 
         //初始化 WXImageObject 和 WXMediaMessage 对象
