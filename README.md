@@ -1,5 +1,16 @@
 # @capacitor/wechat-sdk
-## 关于参数及其他使用配置
+## 关于参数及使用配置
+### 【参数配置】
+1、修改 capacitor.config.ts 或capacitor.config.json文件，增加微信相关配置参数
+```
+const config: CapacitorConfig = {
+  mchid: '123456', // 商户id
+  wechatAppId: 'wxd***c1fdsfsfs7f4f***', // 应用从微信开放平台官方网站申请到的合法appID
+  wechatUniversalLink: 'https://com.***.***/' // UniversalLink
+};
+```
+
+### 【iOS配置】
 1、[参考微信官方配置[UniversalLink]并配置URL scheme](https://developers.weixin.qq.com/doc/oplatform/Mobile_App/Access_Guide/iOS.html)
 2、在你的工程文件中选择 Build Setting，在"Other Linker Flags"中加入"-ObjC -all_load"
 3、修改app/appDelegate.swift，增加或修改下面回调处理：
@@ -9,15 +20,9 @@
        // return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)    
 }
 ```
-4、修改 capacitor.config.ts 或capacitor.config.json文件，增加微信相关配置参数
-```
-const config: CapacitorConfig = {
-  mchid: '123456', // 商户id
-  wechatAppId: 'wxd***c1fdsfsfs7f4f***', // 应用从微信开放平台官方网站申请到的合法appID
-  wechatUniversalLink: 'https://com.***.***/' // UniversalLink
-};
-```
-5、安卓还需要修改[capacitor-wechat-sdk](https://github.com/chenqingze/capacitor-wechat-sdk)/[android](https://github.com/chenqingze/capacitor-wechat-sdk/tree/main/android)/build.gradle文件：
+
+###【Android配置】
+1、安卓还需要修改[capacitor-wechat-sdk](https://github.com/chenqingze/capacitor-wechat-sdk)/[android](https://github.com/chenqingze/capacitor-wechat-sdk/tree/main/android)/build.gradle文件：
 <img width="674" alt="image" src="https://user-images.githubusercontent.com/8285776/153450222-5326f98c-d225-45f2-b609-dcfaeecacd50.png">
 
 ## 关于安装
