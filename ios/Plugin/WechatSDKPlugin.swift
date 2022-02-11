@@ -132,8 +132,6 @@ public class WechatSDKPlugin: CAPPlugin {
             WXApi.send(req) { (res) in
                 if !res{
                     call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
-                }else{
-                    call.resolve();
                 }
                 
             }
@@ -178,8 +176,6 @@ public class WechatSDKPlugin: CAPPlugin {
             WXApi.send(req) { (res) in
                 if !res{
                     call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
-                }else{
-                    call.resolve();
                 }
             }
             
@@ -227,8 +223,6 @@ public class WechatSDKPlugin: CAPPlugin {
             WXApi.send(req) { (res) in
                 if !res{
                     call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
-                }else{
-                    call.resolve();
                 }
             }
             
@@ -275,8 +269,6 @@ public class WechatSDKPlugin: CAPPlugin {
             WXApi.send(req) { (res) in
                 if !res{
                     call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
-                }else{
-                    call.resolve();
                 }
             }
         }
@@ -301,8 +293,6 @@ public class WechatSDKPlugin: CAPPlugin {
             WXApi.send(req) { (res) in
                 if !res{
                     call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
-                }else{
-                    call.resolve();
                 }
             }
             
