@@ -44,12 +44,15 @@ class WXApiManager:NSObject,WXApiDelegate{
         switch code{
         case WXSuccess: /**< 成功    */
             result["message"] = WXApiManager.WECHAT_RESPONSE_OK;
-            if resp.isKind(of: PayResp.self){
-                result["code"] = "0"
-            }else if resp.isKind(of: SendAuthResp.self){
+            result["errCode"] = "0"
+            if resp.isKind(of: SendAuthResp.self){
                 let  response = resp as! SendAuthResp
-                result["code"] = response.code
-                result["state"] = response.state
+                result["state"] = response.state;
+                result["lang"] = response.lang;
+                result["country"] = response.country;
+            }else if resp.isKind(of: WXOpenCustomerServiceResp.self){
+                let  response = resp as! WXOpenCustomerServiceResp
+                result["extMsg"] = response.extMsg
             }
             call.resolve(result)
             break

@@ -15,7 +15,9 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.tencent.mm.opensdk.constants.Build;
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
+import com.tencent.mm.opensdk.modelbiz.WXOpenCustomerServiceChat;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
@@ -361,6 +363,21 @@ public class WechatSDKPlugin extends Plugin {
 
         if (!wxApi.sendReq(req)) {
             call.reject(ERROR_SEND_REQUEST_FAILED);
+        }
+    }
+
+    @PluginMethod
+    public void wxOpenCustomerServiceChat(PluginCall call) {
+        // 判断当前版本是否支持拉起客服会话
+        if (wxApi.getWXAppSupportAPI() >= Build.SUPPORT_OPEN_CUSTOMER_SERVICE_CHAT) {
+            WXOpenCustomerServiceChat.Req req = new WXOpenCustomerServiceChat.Req();
+            req.corpId = call.getString("corpId");  // 企业ID
+            req.url = call.getString("url");	// 客服URL
+            if (!wxApi.sendReq(req)) {
+                call.reject(ERROR_SEND_REQUEST_FAILED);
+            }
+        }else {
+            call.reject("当前微信版本不支持拉起客服会话");
         }
     }
 

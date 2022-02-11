@@ -58,4 +58,14 @@ export interface WechatSDKPlugin {
    */
   sendAuthRequest(options: { scope: string, state: string }): Promise<any>;
 
+
+  /**
+   * 拉起微信客服
+   * @param options
+   * corpId - 企业ID
+   * url - 客服URL
+   * @constructor
+   */
+  wxOpenCustomerServiceChat(options: { corpId: string, url: string }): Promise<any>;
+
 }

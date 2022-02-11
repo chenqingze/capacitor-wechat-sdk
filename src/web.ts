@@ -48,4 +48,10 @@ export class WechatSDKWeb extends WebPlugin implements WechatSDKPlugin {
         return Promise.resolve(undefined);
     }
 
+    wxOpenCustomerServiceChat(options: { corpId: string; url: string }): Promise<any> {
+        console.log(options);
+        return Promise.resolve(undefined);
+    }
+
+
 }

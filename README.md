@@ -55,6 +55,7 @@ npx cap sync
 * [`shareMiniProgram(...)`](#shareminiprogram)
 * [`launchMiniProgram(...)`](#launchminiprogram)
 * [`sendAuthRequest(...)`](#sendauthrequest)
+* [`wxOpenCustomerServiceChat(...)`](#wxopencustomerservicechat)
 
 </docgen-index>
 
@@ -204,6 +205,23 @@ sendAuthRequest(options: { scope: string; state: string; }) => Promise<any>
 | Param         | Type                                           |
 | ------------- | ---------------------------------------------- |
 | **`options`** | <code>{ scope: string; state: string; }</code> |
+
+**Returns:** <code>Promise&lt;any&gt;</code>
+
+--------------------
+
+
+### wxOpenCustomerServiceChat(...)
+
+```typescript
+wxOpenCustomerServiceChat(options: { corpId: string; url: string; }) => Promise<any>
+```
+
+拉起微信客服
+
+| Param         | Type                                          | Description               |
+| ------------- | --------------------------------------------- | ------------------------- |
+| **`options`** | <code>{ corpId: string; url: string; }</code> | corpId - 企业ID url - 客服URL |
 
 **Returns:** <code>Promise&lt;any&gt;</code>
 

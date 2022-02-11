@@ -16,4 +16,5 @@ CAP_PLUGIN(WechatSDKPlugin, "WechatSDK",
            CAP_PLUGIN_METHOD(shareMiniProgram, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(launchMiniProgram, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(sendAuthRequest, CAPPluginReturnPromise);
+           CAP_PLUGIN_METHOD(wxOpenCustomerServiceChat, CAPPluginReturnPromise);
            )

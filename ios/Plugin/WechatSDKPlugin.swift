@@ -335,6 +335,40 @@ public class WechatSDKPlugin: CAPPlugin {
         
     }
     
+    // 拉起微信客服
+    @objc func wxOpenCustomerServiceChat(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let corpId = call.getString("corpId")  else {
+                call.reject("corpId 参数异常")
+                return
+            }
+            guard let url = call.getString("url")  else {
+                call.reject("url 参数异常")
+                return
+            }
+            
+            let req = WXOpenCustomerServiceReq();
+            req.corpid = corpId;    //企业ID
+            req.url = url;          //客服URL
+            
+            
+            guard let callbackId = call.callbackId else {
+                call.reject("The call has no callbackId")
+                return
+            }
+            self.callbackId = callbackId
+            self.bridge?.saveCall(call);
+            
+            WXApi.send(req){ (res) in
+                if !res{
+                    call.reject(WXApiManager.ERROR_SEND_REQUEST_FAILED,"-9")
+                }
+            }
+            
+        }
+        
+    }
+    
     
     @objc private func compressImage(_ image: UIImage, toByte maxLength: Int) -> UIImage {
         var compression: CGFloat = 1
