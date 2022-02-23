@@ -56,7 +56,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
         switch (baseResp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
                 JSObject ret = new JSObject();
-                ret.put("code", 0);
                 int respType = baseResp.getType();
                 if (ConstantsAPI.COMMAND_SENDAUTH == respType) {
                     Log.d(Constants.TAG, "===================>SendAuth callback;");
@@ -69,8 +68,8 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                     Log.d(Constants.TAG, "===================>miniProgram callback;");
                     WXLaunchMiniProgram.Resp res = (WXLaunchMiniProgram.Resp) baseResp;
                     ret.put("extMsg", res.extMsg);
-
                 } else {
+                    ret.put("code", 0);
                     ret.put("message", WECHAT_RESPONSE_OK);
                 }
                 call.resolve(ret);
