@@ -6,7 +6,7 @@
 const config: CapacitorConfig = {
   mchid: '123456', // 商户id，无需微信支付功能可忽略本参数
   wechatAppId: 'wxd***c1fdsfsfs7f4f***', // 应用从微信开放平台官方网站申请到的合法appID
-  wechatUniversalLink: 'https://com.***.***/' // UniversalLink
+  wechatUniversalLink: 'https://com.***.***/' // UniversalLink 仅针对于iOS
 };
 ```
 
@@ -25,7 +25,9 @@ const config: CapacitorConfig = {
 1、安卓还需要修改[capacitor-wechat-sdk](https://github.com/chenqingze/capacitor-wechat-sdk)/[android](https://github.com/chenqingze/capacitor-wechat-sdk/tree/main/android)/build.gradle文件,如下图红色标记所示：     
   
   
-<img width="674" alt="image" src="https://user-images.githubusercontent.com/8285776/153450222-5326f98c-d225-45f2-b609-dcfaeecacd50.png">
+<img width="674" alt="image" src="https://user-images.githubusercontent.com/8285776/153450222-5326f98c-d225-45f2-b609-dcfaeecacd50.png">  
+  
+2、Android 11 适配 [参考微信官方文档](https://open.weixin.qq.com/cgi-bin/announce?action=getannouncement&key=11600155960jI9EY&version=&lang=&token=)    
 
 ## 关于安装
 wechat sdk wrapper with capacitor ,support ios and android,本项目为自用项目并未发布到npm仓库，请clone到本地后，使用本地路径安装 : 
